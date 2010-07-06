@@ -1,4 +1,4 @@
-require 'lib/rack/gerwazy'  # <-- your sinatra app
+require File.join(File.dirname(File.expand_path("__FILE__")), "lib/gerwazy")
 require 'spec'
 require 'rack/test'
 require 'testapp'
@@ -7,11 +7,15 @@ require 'mongo'
 DB_NAME = "gerwazy_test_db"
 COLL_NAME = "test"
 
-describe "Rack::Gerwazy" do
+describe Gerwazy do
   include Rack::Test::Methods
 
   def app
-    Rack::Gerwazy.new(TestApp.new, DB_NAME, COLL_NAME)
+    Gerwazy.new(TestApp.new, DB_NAME, COLL_NAME)
+  end
+
+  def coll
+    @mongo.db(DB_NAME).collection(COLL_NAME)
   end
 
   before(:all) do
@@ -26,16 +30,24 @@ describe "Rack::Gerwazy" do
     @mongo.drop_database(DB_NAME)
   end
 
-  it "pass response returned by application when no recognized tags were found" do
-    get '/'
-    last_response.should be_ok
+  it "should not alter response content returned by app" do
+    get "/"
     last_response.body.should == 'Hello World'
+  end
 
-    get '/response1'
+  it "should not alter response status returned by app" do
+    get "/"
     last_response.should be_ok
-    last_response.body.should == "GET_response1"
+  end
 
-    coll = @mongo.db(DB_NAME).collection(COLL_NAME)
+  it "should save request path in the database" do
+    get "/"
+    coll.find("path" => '/').count.should eql(1)
+  end
+
+  it "should save request time in the database" do
+    get "/"
+    get "/response1"
 
     time1 = coll.find("path" => '/').first['time']
     time1.should > 400
@@ -45,4 +57,10 @@ describe "Rack::Gerwazy" do
     time2.should > 1400
     time2.should < 1600
   end
-end
+
+  it "should save request timestamp in the database" do
+    get "/"
+    timestamp = coll.find("path" => '/').first['created_at']
+    timestamp.should be_instance_of(Time)
+  end
+ end

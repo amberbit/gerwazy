@@ -1,7 +1,7 @@
 require 'rack'
 require 'mongo'
 
-class Rack::Gerwazy
+class Gerwazy
   def initialize(app, db_name = "gerwazy", collection_name = "timings", host = "localhost", port = 27017)
     @app = app
     @db   = Mongo::Connection.new(host, port).db(db_name)
