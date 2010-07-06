@@ -1,0 +1,40 @@
+<table>
+  <tr>
+    <th>
+      URI
+    </th>
+    <th>
+      When
+    </th>
+    <th>
+      Status
+    </th>
+    <th>
+      Time
+    </th>
+  </tr>
+  <% @timings.each do |timing| %>
+    <tr> 
+      <td> 
+        <%= timing['path'] %>
+      </td>
+      <td> 
+        <%= timing['created_at'].strftime("%d/%m/%Y at %H:%M") %>
+      </td>
+      <td> 
+        <%= timing['status'] %>
+      </td>
+      <td> 
+        <%= timing['time'] %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<% if @timings.has_next_page? %>
+  <%= Helper.link_to('next', '/', {page: @page + 1}) %>
+<% end %>
+
+<% if @timings.has_prev_page? %>
+  <%= Helper.link_to('previous', '/', {page: @page - 1}) %>
+<% end %>
