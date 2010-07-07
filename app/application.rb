@@ -19,19 +19,26 @@ class Application
 end
 
 class Helper
-  def self.link_to(inner_text, uri, params = {}, html_options={})
-    i = 0
+
+  def self.create_params_arr params, prefix=nil
+    res = []
     params.each_pair do |name, value|
+      if prefix
+        name = "#{prefix}[#{name}]"
+      end
       name = CGI.escape(name.to_s)
       value = CGI.escape(value.to_s)
-      if i == 0
-        uri << "?"
-      else
-        uri << "&"
-      end
-      uri << "#{name}=#{value}"
-      i += 1
+      res << "#{name}=#{value}"     
     end
+    res
+  end
+
+  def self.link_to(inner_text, uri, params = {}, html_options={})
+    i = 0
+    res = []
+    params.select {|k,v| v.class == Hash}.each {|k,v| res += self.create_params_arr v, k }
+    res += self.create_params_arr(params.select {|k,v| v.class != Hash})
+    uri += "?" + res.join("&")
     "<a href=\"#{uri}\">#{inner_text}</a>"
   end
 

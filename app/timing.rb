@@ -46,8 +46,10 @@ class Timing < Application
     
     singleton.instance_eval "define_method(:has_next_page?) { #{params[:page]*per_page < total_entries} }"
     singleton.instance_eval "define_method(:has_prev_page?) { #{params[:page] > 1} }"
-    min_time = self.collection.find_one(query, { :sort => [['time', :asc]]})['time']
-    max_time = self.collection.find_one(query, { :sort => [['time', :desc]]})['time']
+    min_time = self.collection.find_one(query, { :sort => [['time', :asc]]}) || {}
+    min_time = min_time['time']
+    max_time = self.collection.find_one(query, { :sort => [['time', :desc]]}) || {}
+    max_time = max_time['time']
     singleton.instance_eval "define_method(:min_time) { #{min_time} }"
     singleton.instance_eval "define_method(:max_time) { #{max_time} }"
     results

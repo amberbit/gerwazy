@@ -69,10 +69,12 @@ Time: <%= @timings.min_time %> - <%= @timings.max_time %>
   <% end %>
 </table>
 
-<% if @timings.has_next_page? %>
-  <%= Helper.link_to('next', '/', {page: @page + 1}) %>
+<% if @timings.has_prev_page? %>
+  <%= Helper.link_to('previous', '/', params.merge({page: @page - 1})) %>
 <% end %>
 
-<% if @timings.has_prev_page? %>
-  <%= Helper.link_to('previous', '/', {page: @page - 1}) %>
+|
+
+<% if @timings.has_next_page? %>
+  <%= Helper.link_to('next', '/', params.merge({page: @page + 1})) %>
 <% end %>
