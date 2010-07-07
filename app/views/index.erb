@@ -1,3 +1,41 @@
+<form action="/" method="get">
+  <fieldset>
+    Path regexp: <input type="text" value="<%= params['path'] %>"name="path" />
+    Status: <input type="text" value="<%= params['status'] %>"name="status" />
+    <br/>
+    Time from: <input type="text" value="<%= params['time_from'] %>"name="time_from" />
+    Time to: <input type="text" value="<%= params['time_to'] %>"name="time_to" />
+  </fieldset>
+  <fieldset>
+    <legend>From:</legend>
+    <%= Helper::date_select 'created_at_from', @created_at_from %>
+  </fieldset>
+  <fieldset>
+    <legend>To:</legend>
+    <%= Helper::date_select 'created_at_to', @created_at_to %>
+  </fieldset>
+  <fieldset>
+    <select name="sort_param">
+    <% ['created_at', 'time', 'path', 'status'].each do |param| %>
+      <option <%= params['sort_param'] == param ? 'selected="selected"' : '' %> value="<%= param %>">
+        <%= param %>
+      </option>
+    <% end %>
+    </select>
+    
+    <select name="sort_dir">
+    <% ['asc', 'desc'].each do |param| %>
+      <option <%= params['sort_dir'] == param ? 'selected="selected"' : '' %> value="<%= param %>">
+        <%= param %>
+      </option>
+    <% end %>
+    </select>
+  </fieldset>
+  <input type="submit" value="Submit" />
+</form>
+
+Time: <%= @timings.min_time %> - <%= @timings.max_time %>
+
 <table>
   <tr>
     <th>
